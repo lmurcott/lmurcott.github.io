@@ -7,6 +7,10 @@
 				padding: 1em;
 				text-align: center;
 			}
+			
+			select, input {
+				margin: 0.5em;
+			}
 		</style>
 		<script>
 			function listVariations() {
@@ -82,14 +86,16 @@
 			function drawResults(alacrityList, accuracyList) {
 				let output = null;
 				if (accuracyList.length == 0 && alacrityList.length > 0) {//alacrity only
-					output = "<tr><td>Alacrity Gear Count</td><td>Alacrity Augment Count</td><td>Overcapped Amount</td></tr>";
+					output = "<tr><td>Alacrity Gear Count</td><td>Alacrity Augment Count</td><td>Overcapped Amount</td><td>Available Critical Rating</td></tr>";
 					for (let i = 0; i < alacrityList.length; i++) {
-						output += "<tr><td>" + alacrityList[i].gearC + "</td><td>" + alacrityList[i].augmentC + "</td><td>" + alacrityList[i].overflow + "</td></tr>";
+						let maxCrit = ((10 - alacrityList[i].gearC) * document.getElementById("iRating").value) + ((14 - alacrityList[i].augmentC) * document.getElementById("augment").value);
+						output += "<tr><td>" + alacrityList[i].gearC + "</td><td>" + alacrityList[i].augmentC + "</td><td>" + alacrityList[i].overflow + "</td><td>" + maxCrit + "</td></tr>";
 					}
 				} else if (alacrityList.length == 0 && accuracyList.length > 0) {//accuracy only
-					output = "<tr><td>Accuracy Gear Count</td><td>Accuracy Augment Count</td><td>Proficient Stim?</td><td>Overcapped Amount</td></tr>";
+					output = "<tr><td>Accuracy Gear Count</td><td>Accuracy Augment Count</td><td>Proficient Stim?</td><td>Overcapped Amount</td><td>Available Critical Rating [ex stim]</td></tr>";
 					for (let i = 0; i < accuracyList.length; i++) {
-						output += "<tr><td>" + accuracyList[i].gearC + "</td><td>" + accuracyList[i].augmentC + "</td><td>" + accuracyList[i].stim + "</td><td>" + accuracyList[i].overflow + "</td></tr>";
+						let maxCrit = ((10 - accuracyList[i].gearC) * document.getElementById("iRating").value) + ((14 - accuracyList[i].augmentC) * document.getElementById("augment").value);
+						output += "<tr><td>" + accuracyList[i].gearC + "</td><td>" + accuracyList[i].augmentC + "</td><td>" + accuracyList[i].stim + "</td><td>" + accuracyList[i].overflow + "</td><td>" + maxCrit + "</td></tr>";
 					}
 				} else if (alacrityList.length > 0 && accuracyList.length > 0) {
 					let alcAccList = [];
@@ -116,9 +122,10 @@
 						return a.totalOverflow - b.totalOverflow;
 					});
 					if (alcAccList.length > 0) {
-						output = "<tr><td>Alacrity Gear Count</td><td>Alacrity Augment Count</td><td>Accuracy Gear Count</td><td>Accuracy Augment Count</td><td>Proficient Stim?</td><td>Overcapped Amount</td></tr>";
+						output = "<tr><td>Alacrity Gear Count</td><td>Alacrity Augment Count</td><td>Accuracy Gear Count</td><td>Accuracy Augment Count</td><td>Proficient Stim?</td><td>Overcapped Amount</td><td>Available Critical Rating [ex stim]</td></tr>";
 						for (let i = 0; i < alcAccList.length; i++) {
-							output += "<tr><td>" + alcAccList[i].alcGear + "</td><td>" + alcAccList[i].alcAug + "</td><td>" + alcAccList[i].accGear + "</td><td>" + alcAccList[i].accAug + "</td><td>" + alcAccList[i].accStim + "</td><td>" + alcAccList[i].totalOverflow + "</td></tr>";
+							let maxCrit = ((10 - alcAccList[i].alcGear - alcAccList[i].accGear) * document.getElementById("iRating").value) + ((14 - alcAccList[i].alcAug - alcAccList[i].accAug) * document.getElementById("augment").value);
+							output += "<tr><td>" + alcAccList[i].alcGear + "</td><td>" + alcAccList[i].alcAug + "</td><td>" + alcAccList[i].accGear + "</td><td>" + alcAccList[i].accAug + "</td><td>" + alcAccList[i].accStim + "</td><td>" + alcAccList[i].totalOverflow + "</td><td>" + maxCrit + "</td></tr>";
 						}
 					} else {
 						output = "No combinations available";
@@ -136,14 +143,14 @@
 		<h1>
 			SWTOR Level 80 Augment and Gear Combination Generator
 		</h1>
-		Accuracy Required:
+		Accuracy Rating Required:
 		<select id="accuracy">
 			<option value=0>None - [Healer]</option>
 			<option value=2694>10% - [DPS PVE]</option>
 			<option value=1081>5% - [DPS PVP]</option>
 		</select>
 		<br>
-		Alacrity Required:
+		Alacrity Rating Required:
 		<select id="alacrity">
 			<option value=2051>1.4 second GCD</option>
 			<option value=5426>1.3 second GCD</option>
