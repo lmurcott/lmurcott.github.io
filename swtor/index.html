@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			td {
+				border: solid 1px black;
+				padding: 1em;
+				text-align: center;
+			}
+		</style>
+		<script>
+			function listVariations() {
+				const theAccuracy = document.getElementById("accuracy").value;
+				const theAlacrity = document.getElementById("alacrity").value;
+				const theIRating = document.getElementById("iRating").value;
+				const theAugment = document.getElementById("augment").value;
+				const theStim = document.getElementById("stim").value;
+				let gearCount = 0;
+				let augmentCount = null;
+				let statTotal = 0;
+				
+				let alacrityArray = [];
+				let accuracyArray = [];
+				
+				function getCount(stat, useStim = 0) {
+					augmentCount = 0;
+					statTotal = (gearCount * theIRating) + (useStim * 264);
+					while (statTotal < stat) {
+						if (augmentCount > 13) {
+							gearCount++;
+							augmentCount = 0
+						} else {
+							augmentCount++;
+						}
+						statTotal = (gearCount * theIRating) + (augmentCount * theAugment) + (useStim * 264);
+					}
+					if (stat == theAccuracy) {
+						needStim = "No";
+						if (useStim) {
+							needStim = "Yes";
+						}
+						return {gearC: gearCount, augmentC: augmentCount, overflow: statTotal - stat, stim: needStim};
+					} else {
+						return {gearC: gearCount, augmentC: augmentCount, overflow: statTotal - stat};
+					}
+				};
+				
+				if (theAlacrity > 0){
+					while (augmentCount != 0) {
+						alacrityArray.push(getCount(theAlacrity));
+						gearCount++;
+					}
+					alacrityArray.sort(function (a, b) {
+						return a.overflow - b.overflow;
+					});
+				}
+				
+				if (theAccuracy > 0){
+					if (theStim != ("versatile")) {
+						augmentCount = null;
+						gearCount = 0;
+						while (augmentCount != 0) {
+							accuracyArray.push(getCount(theAccuracy, 1));
+							gearCount++;
+						}
+					}
+					if (theStim != ("proficient")) {
+						augmentCount = 15;
+						gearCount = 0;
+						while (augmentCount != 0) {
+							accuracyArray.push(getCount(theAccuracy));
+							gearCount++;
+						}
+					}
+					accuracyArray.sort(function (a, b) {
+						return a.overflow - b.overflow;
+					});
+				}
+				drawResults(alacrityArray, accuracyArray);
+			}
+			
+			function drawResults(alacrityList, accuracyList) {
+				let output = null;
+				if (accuracyList.length == 0 && alacrityList.length > 0) {//alacrity only
+					output = "<tr><td>Alacrity Gear Count</td><td>Alacrity Augment Count</td><td>Overcapped Amount</td></tr>";
+					for (let i = 0; i < alacrityList.length; i++) {
+						output += "<tr><td>" + alacrityList[i].gearC + "</td><td>" + alacrityList[i].augmentC + "</td><td>" + alacrityList[i].overflow + "</td></tr>";
+					}
+				} else if (alacrityList.length == 0 && accuracyList.length > 0) {//accuracy only
+					output = "<tr><td>Accuracy Gear Count</td><td>Accuracy Augment Count</td><td>Proficient Stim?</td><td>Overcapped Amount</td></tr>";
+					for (let i = 0; i < accuracyList.length; i++) {
+						output += "<tr><td>" + accuracyList[i].gearC + "</td><td>" + accuracyList[i].augmentC + "</td><td>" + accuracyList[i].stim + "</td><td>" + accuracyList[i].overflow + "</td></tr>";
+					}
+				} else if (alacrityList.length > 0 && accuracyList.length > 0) {
+					let alcAccList = [];
+					for (let i = 0; i < accuracyList.length; i++) {
+						let alcClass = null;
+						for (let j = 0; j < alacrityList.length; j++) {
+							if ((accuracyList[i].augmentC + alacrityList[j].augmentC) < 15){
+								alcClass = alacrityList[j];
+								j = alacrityList.length;
+							}
+						}
+						if ((accuracyList[i].gearC + alcClass.gearC) < 11) {
+							alcAccList.push({
+								accGear: accuracyList[i].gearC,
+								accAug: accuracyList[i].augmentC,
+								accStim: accuracyList[i].stim,
+								alcGear: alcClass.gearC,
+								alcAug: alcClass.augmentC,
+								totalOverflow: accuracyList[i].overflow + alcClass.overflow
+							});
+						}
+					}
+					alcAccList.sort(function (a, b) {
+						return a.totalOverflow - b.totalOverflow;
+					});
+					if (alcAccList.length > 0) {
+						output = "<tr><td>Alacrity Gear Count</td><td>Alacrity Augment Count</td><td>Accuracy Gear Count</td><td>Accuracy Augment Count</td><td>Proficient Stim?</td><td>Overcapped Amount</td></tr>";
+						for (let i = 0; i < alcAccList.length; i++) {
+							output += "<tr><td>" + alcAccList[i].alcGear + "</td><td>" + alcAccList[i].alcAug + "</td><td>" + alcAccList[i].accGear + "</td><td>" + alcAccList[i].accAug + "</td><td>" + alcAccList[i].accStim + "</td><td>" + alcAccList[i].totalOverflow + "</td></tr>";
+						}
+					} else {
+						output = "No combinations available";
+					}
+				}
+				
+				document.getElementById("result").innerHTML = output;
+			}
+		</script>
+		<title>
+			SWTOR Alacrity and Accuracy Generator
+		</title>
+	</head>
+	<body>
+		<h1>
+			SWTOR Level 80 Augment and Gear Combination Generator
+		</h1>
+		Accuracy Required:
+		<select id="accuracy">
+			<option value=0>None - [Healer]</option>
+			<option value=2694>10% - [DPS PVE]</option>
+			<option value=1081>5% - [DPS PVP]</option>
+		</select>
+		<br>
+		Alacrity Required:
+		<select id="alacrity">
+			<option value=2051>1.4 second GCD</option>
+			<option value=5426>1.3 second GCD</option>
+			<option value=1120>1.4 second GCD [Arsenal/Gunnery or Carnage/Combat]</option>
+			<option value=4017>1.3 second GCD [Arsenal/Gunnery or Carnage/Combat]</option>
+			<option value=558>1.4 second GCD [Lightning/Telekinetics]</option>
+			<option value=3205>1.3 second GCD [Lightning/Telekinetics]</option>
+			<option value=0>1.5 second GCD [Default]</option>
+		</select>
+		<br>
+		<!--
+		Alacrity Relic Used and Active?
+		<input type="checkbox" id="relic">
+		<br>
+		-->
+		Item Rating:
+		<select id="iRating">
+			<option value=532>326</option>
+			<option value=543>328</option>
+			<option value=554>330</option>
+		</select>
+		<br>
+		Augment Rating:
+		<select id="augment">
+			<option value=108>286</option>
+			<option value=130>300</option>
+		</select>
+		<br>
+		Stim:
+		<select id="stim">
+			<option value="both">Generate Both</option>
+			<option value="proficient">Proficient</option>
+			<option value="versatile">Versatile/Other</option>
+		</select>
+		<br>
+		<input type="button" value="Generate" onclick="listVariations()">
+		<br>
+		<table id="result"></table>
+	</body>
+</html> 
