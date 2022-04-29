@@ -2,14 +2,32 @@
 <html>
 	<head>
 		<style>
-			td {
-				border: solid 1px black;
-				padding: 1em;
+			td, th {
+				border: solid 0.1em black;
+				padding: 0.7em;
 				text-align: center;
+			}
+			
+			th {
+				font-weight: bold;
+				background-color: #DDDDDD;
 			}
 			
 			select, input {
 				margin: 0.5em;
+				padding: 0.3em;
+			}
+			
+			input {
+				font-weight: bold;
+			}
+			
+			select:hover {
+				background-color: #DDDDDD;
+			}
+			
+			tr:hover {
+				background-color: #BBBBBB;
 			}
 		</style>
 		<script>
@@ -86,13 +104,13 @@
 			function drawResults(alacrityList, accuracyList) {
 				let output = null;
 				if (accuracyList.length == 0 && alacrityList.length > 0) {//alacrity only
-					output = "<tr><td>Alacrity Gear Count</td><td>Alacrity Augment Count</td><td>Overcapped Amount</td><td>Available Critical Rating</td></tr>";
+					output = "<tr><th>Alacrity Gear Count</th><th>Alacrity Augment Count</th><th>Overcapped Amount</th><th>Available Critical Rating</th></tr>";
 					for (let i = 0; i < alacrityList.length; i++) {
 						let maxCrit = ((10 - alacrityList[i].gearC) * document.getElementById("iRating").value) + ((14 - alacrityList[i].augmentC) * document.getElementById("augment").value);
 						output += "<tr><td>" + alacrityList[i].gearC + "</td><td>" + alacrityList[i].augmentC + "</td><td>" + alacrityList[i].overflow + "</td><td>" + maxCrit + "</td></tr>";
 					}
 				} else if (alacrityList.length == 0 && accuracyList.length > 0) {//accuracy only
-					output = "<tr><td>Accuracy Gear Count</td><td>Accuracy Augment Count</td><td>Proficient Stim?</td><td>Overcapped Amount</td><td>Available Critical Rating [ex stim]</td></tr>";
+					output = "<tr><th>Accuracy Gear Count</th><th>Accuracy Augment Count</th><th>Proficient Stim?</th><th>Overcapped Amount</th><th>Available Critical Rating [ex stim]</th></tr>";
 					for (let i = 0; i < accuracyList.length; i++) {
 						let maxCrit = ((10 - accuracyList[i].gearC) * document.getElementById("iRating").value) + ((14 - accuracyList[i].augmentC) * document.getElementById("augment").value);
 						output += "<tr><td>" + accuracyList[i].gearC + "</td><td>" + accuracyList[i].augmentC + "</td><td>" + accuracyList[i].stim + "</td><td>" + accuracyList[i].overflow + "</td><td>" + maxCrit + "</td></tr>";
@@ -122,7 +140,7 @@
 						return a.totalOverflow - b.totalOverflow;
 					});
 					if (alcAccList.length > 0) {
-						output = "<tr><td>Alacrity Gear Count</td><td>Alacrity Augment Count</td><td>Accuracy Gear Count</td><td>Accuracy Augment Count</td><td>Proficient Stim?</td><td>Overcapped Amount</td><td>Available Critical Rating [ex stim]</td></tr>";
+						output = "<tr><th>Alacrity Gear Count</th><th>Alacrity Augment Count</th><th>Accuracy Gear Count</th><th>Accuracy Augment Count</th><th>Proficient Stim?</th><th>Overcapped Amount</th><th>Available Critical Rating [ex stim]</th></tr>";
 						for (let i = 0; i < alcAccList.length; i++) {
 							let maxCrit = ((10 - alcAccList[i].alcGear - alcAccList[i].accGear) * document.getElementById("iRating").value) + ((14 - alcAccList[i].alcAug - alcAccList[i].accAug) * document.getElementById("augment").value);
 							output += "<tr><td>" + alcAccList[i].alcGear + "</td><td>" + alcAccList[i].alcAug + "</td><td>" + alcAccList[i].accGear + "</td><td>" + alcAccList[i].accAug + "</td><td>" + alcAccList[i].accStim + "</td><td>" + alcAccList[i].totalOverflow + "</td><td>" + maxCrit + "</td></tr>";
