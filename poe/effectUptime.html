@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Ailment Uptime calculator for Path Of Exile</title>
+		<style>
+			select, input {
+				margin: 0.5em;
+				padding: 0.3em;
+			}
+			
+			#chance {
+				display: none;
+			}
+		</style>
+		 <script src="../myCalc.js"></script> 
+		<script>
+			function run() {
+				const effect = JSON.parse(document.getElementById("ailment").value);
+				let ailmentDuration = effect[0];
+				if(effect[2] != false && document.getElementById("faster").value != "") {
+					ailmentDuration = ailmentDuration / (1 + (document.getElementById("faster").value / 100));
+				}
+				if(effect[3] != false && document.getElementById("duration").value != "") {
+					ailmentDuration = ailmentDuration * (1 + (document.getElementById("duration").value / 100));
+				}
+				
+				const selectedInput = document.getElementById("checkAgainst").value;
+				const atkRate = document.getElementById("attackRate").value;
+				const chanceToApply = document.getElementById("chance").value;
+				
+				let output = "Error: Please check inputs";
+				if (selectedInput == "attackRate" && atkRate != "") {
+					const chanceRequired = Math.ceil((1 / ((ailmentDuration / effect[1]) * atkRate)) * 100);
+					output = (chanceRequired > 100)
+						? "Not a high enough attack rate"
+						: "Required Chance to Apply: " + chanceRequired + "%";					
+					
+				} else if (selectedInput == "chance" && chanceToApply != "") {
+					const rateRequired = round(1/((chanceToApply/100)*((ailmentDuration / effect[1]))),1);
+					output = "Minimum Required Attack Rate: " + rateRequired;
+				}
+				document.getElementById("result").innerHTML = output;
+			}
+			
+			function hideCheckInput() {
+				const selectedInput = document.getElementById("checkAgainst").value;
+				document.getElementById("attackRate").style.display = "none";
+				document.getElementById("chance").style.display = "none";
+				document.getElementById(selectedInput).style.display = "inline";
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Theoretical 100% uptime on Ailment/Effect for Path Of Exile</h1>
+		Ailment: 
+		<select id="ailment"><!-- [base duration, stacks, uses faster, uses duration] -->
+			<option value="[5, 1]">Bleed</option>
+			<option value="[5, 8]">Bleed - Crimson Dance Max Stacks</option>
+			<option value="[8, 1, false, false]">Elemental Overload</option>
+			<option value="[4, 1]">Ignite</option>
+			<option value="[4, 2]">Ignite - Emberwake x 1 equipped</option>
+			<option value="[2, 1]">Poison - 1 Stack</option>
+			<option value="[2, 1]">Poison - Viper Strike 1 Stack</option>
+			<option value="[2, 1, false]">Shock</option>
+		</select>
+		<br>
+		Increased Duration Modifier [%] (if applicable):
+		<input type="number" id="duration" min=0 step=1>
+		<br>
+		Ailment Deals Damage Faster [%] (if applicable):
+		<input type="number" id="faster" min=0 step=1>
+		<br>
+		Check Against:
+		<select onChange="hideCheckInput()" id="checkAgainst">
+			<option value="attackRate">Attack Rate</option>
+			<option value="chance">% Chance to apply</option>
+		</select>
+		<input type="number" id="attackRate" value=1 min=0.1 step=0.1>
+		<input type="number" id="chance" value=10 min=1>
+		<br>
+		<input type="button" value="Calculate" onClick="run()">
+		<h2 id="result"></h2>
+	</body>
+</html>

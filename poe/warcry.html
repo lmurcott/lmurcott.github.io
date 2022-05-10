@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Exerted calculator for Path Of Exile</title>
+		<style>
+			select, input {
+				margin: 0.5em;
+				padding: 0.3em;
+			}
+		</style>
+		 <script src="../myCalc.js"></script> 
+		<script>
+			function run() {
+				let warcryAttacks = parseInt(document.getElementById("warcry").value) + parseInt(document.getElementById("additionalAttacks").value);
+				let warcryCooldown = 8;
+				const attackRate = document.getElementById("attackRate").value;
+				if (document.getElementById("urgentOrders").checked) {
+					warcryCooldown += 2;
+				}
+				if (document.getElementById("warcryGloves").checked) {
+					warcryCooldown += 2;
+				}
+				let hitsCalc =  calc(1, calc(calc(warcryAttacks, attackRate, 3), warcryCooldown, 3), 1);
+				let cooldownRecovery = calc(hitsCalc, calc(1, hitsCalc, 1), 3);
+				const santizedInput = (cooldownRecovery < 0)
+					? "0%"
+					: Math.ceil(cooldownRecovery * 100) + "%";
+					
+				document.getElementById("result").innerHTML = "Required Cooldown Recovery Rate: " + santizedInput;
+			}
+		</script>
+	</head>
+	<body>
+		<h1>All Attacks are Exerted Calculator for Path Of Exile</h1>
+		Attack Rate:
+			<input type="number" id="attackRate" min=0 step=0.1 value=1.1>
+		<br>
+		Warcry:
+		<select id="warcry">
+			<option value=8>Ancestral Cry</option>
+			<option value=5>Battlemage's Cry</option>
+			<option value=6>Infernal Cry</option>
+			<option value=2>Intimidating Cry</option>
+			<option value=5>Rallying Cry</option>
+			<option value=4>Seismic Cry</option>
+		</select>
+		<br>
+		Urgent Orders Support:
+			<input type="checkbox" id="urgentOrders">
+		<br>
+		Taxing/Gruelling/Debilitation Gauntlets:
+			<input type="checkbox" id="warcryGloves">
+		<br>
+		Additional Exerted Attacks:
+			<select id="additionalAttacks">
+				<option value=0>0</option>
+				<option value=1>1</option>
+				<option value=2>2</option>
+				<option value=3>3</option>
+			</select>
+		<br>
+		Up to 3 Additional exerted attacks can be obtained from the "Second Wind Support" gem, the "Measured Fury" tree passive, and either of the "Crushing Force Magnifier/Blunt Force Condenser/Impact Force Propagator" maces.
+		<br>
+		<input type="button" value="Calculate" onClick="run()">
+		<h2 id="result"></h2>
+	</body>
+</html>
