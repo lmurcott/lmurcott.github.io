@@ -37,7 +37,7 @@
 					
 				} else if (selectedInput == "chance" && chanceToApply != "") {
 					const rateRequired = round(1/((chanceToApply/100)*((ailmentDuration / effect[1]))),1);
-					output = "Minimum Required Attack Rate: " + rateRequired;
+					output = "Minimum Required Attack/Cast Rate: " + rateRequired;
 				}
 				document.getElementById("result").innerHTML = output;
 			}
@@ -72,7 +72,7 @@
 		<br>
 		Check Against:
 		<select onChange="hideCheckInput()" id="checkAgainst">
-			<option value="attackRate">Attack Rate</option>
+			<option value="attackRate">Attack/Cast Rate</option>
 			<option value="chance">% Chance to apply</option>
 		</select>
 		<input type="number" id="attackRate" value=1 min=0.1 step=0.1>
