@@ -24,7 +24,7 @@
 				let cooldownRecovery = calc(hitsCalc, calc(1, hitsCalc, 1), 3);
 				const santizedInput = (cooldownRecovery < 0)
 					? "0%"
-					: Math.ceil(cooldownRecovery * 100) + "%";
+					: Math.ceil(calc(cooldownRecovery,100, 2)) + "%";
 					
 				document.getElementById("result").innerHTML = "Required Cooldown Recovery Rate: " + santizedInput;
 			}
@@ -60,7 +60,7 @@
 				<option value=4>4</option>
 			</select>
 		<br>
-		Up to 4 Additional exerted attacks can be obtained from the "Second Wind Support" gem, another from an "Anomalous Second Wind Support", the "Measured Fury" tree passive, and either of the "Crushing Force Magnifier/Blunt Force Condenser/Impact Force Propagator" maces.
+		Up to 4 Additional exerted attacks can be obtained, one from the "Second Wind Support" gem, another from an "Anomalous Second Wind Support", the "Measured Fury" tree passive, and either of the "Crushing Force Magnifier/Blunt Force Condenser/Impact Force Propagator" maces.
 		<br>
 		<input type="button" value="Calculate" onClick="run()">
 		<h2 id="result"></h2>

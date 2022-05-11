@@ -18,10 +18,10 @@
 				const effect = JSON.parse(document.getElementById("ailment").value);
 				let ailmentDuration = effect[0];
 				if(effect[2] != false && document.getElementById("faster").value != "") {
-					ailmentDuration = ailmentDuration / (1 + (document.getElementById("faster").value / 100));
+					ailmentDuration = calc(ailmentDuration, 1 + calc(document.getElementById("faster").value, 100, 3), 3);
 				}
 				if(effect[3] != false && document.getElementById("duration").value != "") {
-					ailmentDuration = ailmentDuration * (1 + (document.getElementById("duration").value / 100));
+					ailmentDuration = calc(ailmentDuration, (1 + calc(document.getElementById("duration").value, 100, 3)));
 				}
 				
 				const selectedInput = document.getElementById("checkAgainst").value;
