@@ -37,11 +37,33 @@
 		</style>
 		<script>
 			function listVariations() {
-				const theAccuracy = document.getElementById("accuracy").value;
-				const theAlacrity = document.getElementById("alacrity").value;
-				const theIRating = document.getElementById("iRating").value;
-				const theAugment = document.getElementById("augment").value;
+				const theAccuracy = parseInt(document.getElementById("accuracy").value);
+				const theAlacrity = parseInt(document.getElementById("alacrity").value);
+				const theIRating = parseInt(document.getElementById("iRating").value);
+				const theAugment = parseInt(document.getElementById("augment").value);
 				const theStim = document.getElementById("stim").value;
+				const implantRating = parseInt(document.getElementById("implantRating").value);
+				// Implant Stats
+				let baseAccuracy = 0;
+				let baseAlacrity = 0;
+				let baseCrit = 0;
+				
+				let iNo = 1;
+				while (iNo < 3){
+					switch (document.getElementById("implant" + iNo + "Stat").value) {
+						case "accuracy":
+							baseAccuracy += implantRating;
+							break;
+						case "alacrity":
+							baseAlacrity += implantRating;
+							break;
+						case "critical":
+							baseCrit += implantRating;
+							break;
+					}
+					iNo++;
+				}
+				
 				let gearCount = 0;
 				let augmentCount = null;
 				let statTotal = 0;
@@ -49,9 +71,9 @@
 				let alacrityArray = [];
 				let accuracyArray = [];
 				
-				function getCount(stat, useStim = 0) {
+				function getCount(stat, baseStat, useStim = 0) {
 					augmentCount = 0;
-					statTotal = (gearCount * theIRating) + (useStim * 264);
+					statTotal = baseStat + (gearCount * theIRating) + (useStim * 264);
 					while (statTotal < stat) {
 						if (augmentCount > 13) {
 							gearCount++;
@@ -59,7 +81,7 @@
 						} else {
 							augmentCount++;
 						}
-						statTotal = (gearCount * theIRating) + (augmentCount * theAugment) + (useStim * 264);
+						statTotal = baseStat + (gearCount * theIRating) + (augmentCount * theAugment) + (useStim * 264);
 					}
 					if (stat == theAccuracy) {
 						needStim = "No";
@@ -74,7 +96,7 @@
 				
 				if (theAlacrity > 0){
 					while (augmentCount != 0) {
-						alacrityArray.push(getCount(theAlacrity));
+						alacrityArray.push(getCount(theAlacrity, baseAlacrity));
 						gearCount++;
 					}
 					alacrityArray.sort(function (a, b) {
@@ -87,7 +109,7 @@
 						augmentCount = null;
 						gearCount = 0;
 						while (augmentCount != 0) {
-							accuracyArray.push(getCount(theAccuracy, 1));
+							accuracyArray.push(getCount(theAccuracy, baseAccuracy, 1));
 							gearCount++;
 						}
 					}
@@ -95,7 +117,7 @@
 						augmentCount = 15;
 						gearCount = 0;
 						while (augmentCount != 0) {
-							accuracyArray.push(getCount(theAccuracy));
+							accuracyArray.push(getCount(theAccuracy, baseAccuracy));
 							gearCount++;
 						}
 					}
@@ -103,21 +125,21 @@
 						return a.overflow - b.overflow;
 					});
 				}
-				drawResults(alacrityArray, accuracyArray);
+				drawResults(alacrityArray, accuracyArray, baseCrit);
 			}
 			
-			function drawResults(alacrityList, accuracyList) {
+			function drawResults(alacrityList, accuracyList, baseCrit) {
 				let output = null;
 				if (accuracyList.length == 0 && alacrityList.length > 0) {//alacrity only
-					output = "<tr><th>Alacrity Gear Count</th><th>Alacrity Augment Count</th><th>Overcapped Amount</th><th>Available Critical Rating</th></tr>";
+					output = "<tr><th>Alacrity Gear Count <span class='footnote'><br>[excluding implants]</span></th><th>Alacrity Augment Count</th><th>Overcapped Amount</th><th>Available Critical Rating <span class='footnote'><br>[excluding stim/crystal etc.]</span></th></tr>";
 					for (let i = 0; i < alacrityList.length; i++) {
-						let maxCrit = ((10 - alacrityList[i].gearC) * document.getElementById("iRating").value) + ((14 - alacrityList[i].augmentC) * document.getElementById("augment").value);
+						let maxCrit = baseCrit + ((8 - alacrityList[i].gearC) * document.getElementById("iRating").value) + ((14 - alacrityList[i].augmentC) * document.getElementById("augment").value);
 						output += "<tr><td>" + alacrityList[i].gearC + "</td><td>" + alacrityList[i].augmentC + "</td><td>" + alacrityList[i].overflow + "</td><td>" + maxCrit + "</td></tr>";
 					}
 				} else if (alacrityList.length == 0 && accuracyList.length > 0) {//accuracy only
-					output = "<tr><th>Accuracy Gear Count</th><th>Accuracy Augment Count</th><th>Proficient Stim?</th><th>Overcapped Amount</th><th>Available Critical Rating <span class='footnote'><br>[excluding stim/crystal]</span></th></tr>";
+					output = "<tr><th>Accuracy Gear Count <span class='footnote'><br>[excluding implants]</span></th><th>Accuracy Augment Count</th><th>Proficient Stim Required</th><th>Overcapped Amount</th><th>Available Critical Rating <span class='footnote'><br>[excluding stim/crystal etc.]</span></th></tr>";
 					for (let i = 0; i < accuracyList.length; i++) {
-						let maxCrit = ((10 - accuracyList[i].gearC) * document.getElementById("iRating").value) + ((14 - accuracyList[i].augmentC) * document.getElementById("augment").value);
+						let maxCrit = baseCrit + ((8 - accuracyList[i].gearC) * document.getElementById("iRating").value) + ((14 - accuracyList[i].augmentC) * document.getElementById("augment").value);
 						output += "<tr><td>" + accuracyList[i].gearC + "</td><td>" + accuracyList[i].augmentC + "</td><td>" + accuracyList[i].stim + "</td><td>" + accuracyList[i].overflow + "</td><td>" + maxCrit + "</td></tr>";
 					}
 				} else if (alacrityList.length > 0 && accuracyList.length > 0) {
@@ -130,7 +152,7 @@
 								j = alacrityList.length;
 							}
 						}
-						if ((accuracyList[i].gearC + alcClass.gearC) < 11) {
+						if ((accuracyList[i].gearC + alcClass.gearC) < 9) {
 							alcAccList.push({
 								accGear: accuracyList[i].gearC,
 								accAug: accuracyList[i].augmentC,
@@ -145,9 +167,9 @@
 						return a.totalOverflow - b.totalOverflow;
 					});
 					if (alcAccList.length > 0) {
-						output = "<tr><th>Alacrity Gear Count</th><th>Alacrity Augment Count</th><th>Accuracy Gear Count</th><th>Accuracy Augment Count</th><th>Proficient Stim?</th><th>Overcapped Amount</th><th>Available Critical Rating <span class='footnote'><br>[excluding stim/crystal]</span></th></tr>";
+						output = "<tr><th>Alacrity Gear Count <span class='footnote'><br>[excluding implants]</span></th><th>Alacrity Augment Count</th><th>Accuracy Gear Count <span class='footnote'><br>[excluding implants]</span></th><th>Accuracy Augment Count</th><th>Proficient Stim Required</th><th>Overcapped Amount</th><th>Available Critical Rating <span class='footnote'><br>[excluding stim/crystal etc.]</span></th></tr>";
 						for (let i = 0; i < alcAccList.length; i++) {
-							let maxCrit = ((10 - alcAccList[i].alcGear - alcAccList[i].accGear) * document.getElementById("iRating").value) + ((14 - alcAccList[i].alcAug - alcAccList[i].accAug) * document.getElementById("augment").value);
+							let maxCrit = baseCrit + ((8 - alcAccList[i].alcGear - alcAccList[i].accGear) * document.getElementById("iRating").value) + ((14 - alcAccList[i].alcAug - alcAccList[i].accAug) * document.getElementById("augment").value);
 							output += "<tr><td>" + alcAccList[i].alcGear + "</td><td>" + alcAccList[i].alcAug + "</td><td>" + alcAccList[i].accGear + "</td><td>" + alcAccList[i].accAug + "</td><td>" + alcAccList[i].accStim + "</td><td>" + alcAccList[i].totalOverflow + "</td><td>" + maxCrit + "</td></tr>";
 						}
 					} else {
@@ -194,6 +216,13 @@
 			<option value=532>326</option>
 			<option value=543>328</option>
 			<option value=554>330</option>
+			<!--
+			<option value=0>332</option>
+			<option value=0>334</option>
+			<option value=0>336</option>
+			<option value=0>338</option>
+			<option value=0>340</option>
+			-->
 		</select>
 		<br>
 		Augment Rating:
@@ -205,8 +234,33 @@
 		Stim:
 		<select id="stim">
 			<option value="both">Generate Both</option>
-			<option value="proficient">Proficient</option>
+			<option value="proficient">Proficient [Accuracy / Critical]</option>
 			<option value="versatile">Versatile/Other</option>
+		</select>
+		<br>
+		Implant Rating: 
+		<select id="implantRating">
+			<option value=532>326</option>
+			<option value=543>328</option>
+			<option value=554>330</option>
+			<!--
+			<option value=0>332</option>
+			<option value=0>334</option>
+			-->
+		</select>
+		<br>
+		Implant 1 Stat:
+		<select id="implant1Stat">
+			<option value="accuracy">Accuracy</option>
+			<option value="alacrity">Alacrity</option>
+			<option value="critical" selected>Critical</option>
+		</select>
+		<br>
+		Implant 2 Stat:
+		<select id="implant2Stat">
+			<option value="accuracy">Accuracy</option>
+			<option value="alacrity">Alacrity</option>
+			<option value="critical" selected>Critical</option>
 		</select>
 		<br>
 		<input type="button" value="Generate" onclick="listVariations()">
