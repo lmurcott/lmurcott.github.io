@@ -2,8 +2,22 @@
 <html>
 	<head>
 		<style>
+			h1 {
+				margin: 0px;
+			}
+			
+			h2 {
+				font-size: 0.7em;
+				font-style: italic;
+			}
+			
+			* {
+				font-family: sans-serif;
+			}
+			
 			td, th {
 				border: solid 0.1em black;
+				border-radius: 0.3em;
 				padding: 0.7em;
 				text-align: center;
 			}
@@ -17,17 +31,14 @@
 				margin: 0.5em;
 				padding: 0.3em;
 			}
-			
+
 			input {
 				font-weight: bold;
 			}
 			
-			select:hover {
-				background-color: #DDDDDD;
-			}
-			
-			tr:hover {
-				background-color: #BBBBBB;
+			tr:hover > td {
+				background-color: black;
+				color: white;
 			}
 			
 			.footnote {
@@ -188,6 +199,9 @@
 		<h1>
 			SWTOR Level 80 Augment and Gear Combination Calculator [7.1]
 		</h1>
+		<h2>
+			Made By CarpalTunneler - Galaxy Knights [Satele Shan]
+		</h2>
 		Accuracy % Required:
 		<select id="accuracy">
 			<option value=0>None - [Healer]</option>
