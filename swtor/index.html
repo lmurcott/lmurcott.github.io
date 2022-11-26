@@ -45,6 +45,33 @@
 				font-weight: normal;
 				font-size: 0.8em;
 			}
+			
+			.btnSubmit {
+				font-size: 1.5em;
+			}
+			
+			.tooltipLink {
+				display: inline-block;
+				border-bottom: dotted 1px black;
+			}
+			
+			.tooltipLink:hover .tooltip{
+				visibility: visible;
+			}
+			
+			.tooltip {
+				visibility: hidden;
+				width: 15em;
+				padding: 0.75em;
+				margin: 0em;
+				font-weight: bold;
+				text-align: center;
+				border-radius: 0.25em;
+				position: absolute;
+				z-index: 1;
+				background-color: black;
+				color: white;
+			}
 		</style>
 		<script>
 			function listVariations() {
@@ -88,7 +115,7 @@
 					while (statTotal < stat) {
 						if (augmentCount > 13) {
 							gearCount++;
-							augmentCount = 0
+							augmentCount = 0;
 						} else {
 							augmentCount++;
 						}
@@ -103,7 +130,7 @@
 					} else {
 						return {gearC: gearCount, augmentC: augmentCount, overflow: statTotal - stat};
 					}
-				};
+				}
 				
 				if (theAlacrity > 0){
 					while (augmentCount != 0) {
@@ -225,7 +252,9 @@
 		<input type="checkbox" id="relic">
 		<br>
 		-->
-		Item Rating:
+		<div class="tooltipLink">Item Rating:
+			<span class="tooltip">This includes Main Hand, Off Hand, Helmet, Body Armour, Gloves, Boots, & Ear Piece</span>
+		</div>
 		<select id="iRating">
 			<option value=543>328</option>
 			<option value=554>330</option>
@@ -243,11 +272,11 @@
 			<option value=130>300 [Legendary]</option>
 		</select>
 		<br>
-		Stim:
+		Stimulant Used:
 		<select id="stim">
-			<option value="both">Generate Both</option>
-			<option value="proficient">Proficient [Accuracy / Critical]</option>
-			<option value="versatile">Versatile/Other</option>
+			<option value="both">Show All</option>
+			<option value="proficient">Proficient [264 Accuracy / 109 Critical]</option>
+			<option value="versatile">Versatile/Other/None</option>
 		</select>
 		<br>
 		Implant Rating: 
@@ -272,7 +301,7 @@
 			<option value="critical" selected>Critical</option>
 		</select>
 		<br>
-		<input type="button" value="Generate" onclick="listVariations()">
+		<input type="button" value="List Combinations" class="btnSubmit" onclick="listVariations()">
 		<br>
 		<table id="result"></table>
 	</body>
