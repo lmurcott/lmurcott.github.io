@@ -74,7 +74,7 @@
 			}
 		</style>
 		<script>
-			function listVariations() {
+			function listVariations() {//Generate Alacrity and Accuracy combinations individually
 				const theAccuracy = parseInt(document.getElementById("accuracy").value);
 				const theAlacrity = parseInt(document.getElementById("alacrity").value);
 				const theIRating = parseInt(document.getElementById("iRating").value);
@@ -166,7 +166,7 @@
 				drawResults(alacrityArray, accuracyArray, baseCrit);
 			}
 			
-			function drawResults(alacrityList, accuracyList, baseCrit) {
+			function drawResults(alacrityList, accuracyList, baseCrit) {//Draw Results to Page
 				let output = null;
 				if (accuracyList.length == 0 && alacrityList.length > 0) {//alacrity only
 					output = "<tr><th>Alacrity Gear Count <span class='footnote'><br>[excluding implants]</span></th><th>Alacrity Augment Count</th><th>Overcapped Amount</th><th>Available Critical Rating <span class='footnote'><br>[excluding stim/crystal etc.]</span></th></tr>";
@@ -180,7 +180,7 @@
 						let maxCrit = baseCrit + ((8 - accuracyList[i].gearC) * document.getElementById("iRating").value) + ((14 - accuracyList[i].augmentC) * document.getElementById("augment").value);
 						output += "<tr><td>" + accuracyList[i].gearC + "</td><td>" + accuracyList[i].augmentC + "</td><td>" + accuracyList[i].stim + "</td><td>" + accuracyList[i].overflow + "</td><td>" + maxCrit + "</td></tr>";
 					}
-				} else if (alacrityList.length > 0 && accuracyList.length > 0) {
+				} else if (alacrityList.length > 0 && accuracyList.length > 0) {//accuracy and alacrity
 					let alcAccList = [];
 					for (let i = 0; i < accuracyList.length; i++) {
 						let alcClass = null;
@@ -190,7 +190,7 @@
 								j = alacrityList.length;
 							}
 						}
-						if ((accuracyList[i].gearC + alcClass.gearC) < 9) {
+						if ((accuracyList[i].gearC + alcClass.gearC) < 8 && accuracyList[i].gearC < 7) {//Set maximum accuracy and alacrity slots available
 							alcAccList.push({
 								accGear: accuracyList[i].gearC,
 								accAug: accuracyList[i].augmentC,
