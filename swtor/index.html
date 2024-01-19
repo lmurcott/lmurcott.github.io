@@ -171,8 +171,10 @@
 				if (accuracyList.length == 0 && alacrityList.length > 0) {//alacrity only
 					output = "<tr><th>Alacrity Gear Count <span class='footnote'><br>[excluding implants]</span></th><th>Alacrity Augment Count</th><th>Overcapped Amount</th><th>Available Critical Rating <span class='footnote'><br>[excluding stim/crystal etc.]</span></th></tr>";
 					for (let i = 0; i < alacrityList.length; i++) {
-						let maxCrit = baseCrit + ((8 - alacrityList[i].gearC) * document.getElementById("iRating").value) + ((14 - alacrityList[i].augmentC) * document.getElementById("augment").value);
-						output += "<tr><td>" + alacrityList[i].gearC + "</td><td>" + alacrityList[i].augmentC + "</td><td>" + alacrityList[i].overflow + "</td><td>" + maxCrit + "</td></tr>";
+						if(alacrityList[i].gearC > 0){//Minimum alacrity count
+							let maxCrit = baseCrit + ((8 - alacrityList[i].gearC) * document.getElementById("iRating").value) + ((14 - alacrityList[i].augmentC) * document.getElementById("augment").value);
+							output += "<tr><td>" + alacrityList[i].gearC + "</td><td>" + alacrityList[i].augmentC + "</td><td>" + alacrityList[i].overflow + "</td><td>" + maxCrit + "</td></tr>";
+						}
 					}
 				} else if (alacrityList.length == 0 && accuracyList.length > 0) {//accuracy only
 					output = "<tr><th>Accuracy Gear Count <span class='footnote'><br>[excluding implants]</span></th><th>Accuracy Augment Count</th><th>Proficient Stim Required</th><th>Overcapped Amount</th><th>Available Critical Rating <span class='footnote'><br>[excluding stim/crystal etc.]</span></th></tr>";
