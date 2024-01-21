@@ -79,17 +79,15 @@ function listVariations () {
         let maxGear = 7;
         let mergedArray = [];
 
-        if (!hydeZeek()) {
+        if (hydeZeek()) {
             maxGear = 8;
         }
-
-        console.log(accuracy);
 
         for (let a = 0; a < alacrity.length; a++) {
             for (let b = 0; b < accuracy.length; b++) {
                 if (
                     (alacrity[a][1] + accuracy[b][1]) < 15 &&
-                    (alacrity[a][0] + accuracy[b][0]) < maxGear
+                    (alacrity[a][0] + accuracy[b][0]) <= maxGear
                     ) {
                         let theCombination = alacrity[a].concat(accuracy[b])
                         theCombination.push(alacrity[a][2] + accuracy[b][2]);//total stats in array
@@ -123,7 +121,7 @@ function listVariations () {
 
     const generate = function(base, target, maxGear, minGear) {
         results = [];
-        for (let g = minGear; g != maxGear; g++) {
+        for (let g = minGear; g <= maxGear; g++) {
             let total = base + (g * theIRating);
             for (let a = 0; a < 15; a++) {//find augments
                 if ((total + (a * theAugment)) >= target) {
