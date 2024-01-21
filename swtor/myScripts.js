@@ -31,16 +31,16 @@ function listVariations () {
 
         if (theAccuracy > 0 && theStim != "versatile") {//calculate stim accuracy
             accuracyStimC = statCombinations("accuracy", theAccuracy, true);
-            accuracyStimC = isStimmed(accuracyStimC, "Yes");
+            accuracyStimC = sortArray(isStimmed(accuracyStimC, "Yes"), 2);
         }
 
         if (theAccuracy > 0 && theStim != "proficient") {//calculate no stim accuracy
             accuracyC = statCombinations("accuracy", theAccuracy);
-            accuracyC = isStimmed(accuracyC, "No");
+            accuracyC = sortArray(isStimmed(accuracyC, "No"), 2);
         }
 
         if (theAlacrity > 0) {//generate alacrity
-            alacrityC = statCombinations("alacrity", theAlacrity);
+            alacrityC = sortArray(statCombinations("alacrity", theAlacrity), 2);
         }
 
         if (theAlacrity > 0 && theAccuracy > 0) {//Generate Both stats
@@ -82,6 +82,8 @@ function listVariations () {
         if (!hydeZeek()) {
             maxGear = 8;
         }
+
+        console.log(accuracy);
 
         for (let a = 0; a < alacrity.length; a++) {
             for (let b = 0; b < accuracy.length; b++) {
