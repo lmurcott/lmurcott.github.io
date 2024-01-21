@@ -31,12 +31,12 @@ function listVariations () {
 
         if (theAccuracy > 0 && theStim != "versatile") {//calculate stim accuracy
             accuracyStimC = statCombinations("accuracy", theAccuracy, true);
-            accuracyStimC = isStimmed(accuracyStimC, "Y");
+            accuracyStimC = isStimmed(accuracyStimC, "Yes");
         }
 
         if (theAccuracy > 0 && theStim != "proficient") {//calculate no stim accuracy
             accuracyC = statCombinations("accuracy", theAccuracy);
-            accuracyC = isStimmed(accuracyC, "N");
+            accuracyC = isStimmed(accuracyC, "No");
         }
 
         if (theAlacrity > 0) {//generate alacrity
