@@ -61,11 +61,10 @@
 			
 			.tooltip {
 				visibility: hidden;
-				width: 15em;
 				padding: 0.75em;
 				margin: 0em;
 				font-weight: bold;
-				text-align: center;
+				text-align: left;
 				border-radius: 0.25em;
 				position: absolute;
 				z-index: 1;
@@ -73,153 +72,7 @@
 				color: white;
 			}
 		</style>
-		<script>
-			function listVariations() {//Generate Alacrity and Accuracy combinations individually
-				const theAccuracy = parseInt(document.getElementById("accuracy").value);
-				const theAlacrity = parseInt(document.getElementById("alacrity").value);
-				const theIRating = parseInt(document.getElementById("iRating").value);
-				const theAugment = parseInt(document.getElementById("augment").value);
-				const theStim = document.getElementById("stim").value;
-				const implantRating = parseInt(document.getElementById("implantRating").value);
-				// Implant Stats
-				let baseAccuracy = 0;
-				let baseAlacrity = 0;
-				let baseCrit = 0;
-				
-				let iNo = 1;
-				while (iNo < 3){
-					switch (document.getElementById("implant" + iNo + "Stat").value) {
-						case "accuracy":
-							baseAccuracy += implantRating;
-							break;
-						case "alacrity":
-							baseAlacrity += implantRating;
-							break;
-						case "critical":
-							baseCrit += implantRating;
-							break;
-					}
-					iNo++;
-				}
-				
-				let gearCount = 0;
-				let augmentCount = null;
-				let statTotal = 0;
-				
-				let alacrityArray = [];
-				let accuracyArray = [];
-				
-				function getCount(stat, baseStat, useStim = 0) {
-					augmentCount = 0;
-					statTotal = baseStat + (gearCount * theIRating) + (useStim * 264);
-					while (statTotal < stat) {
-						if (augmentCount > 13) {
-							gearCount++;
-							augmentCount = 0;
-						} else {
-							augmentCount++;
-						}
-						statTotal = baseStat + (gearCount * theIRating) + (augmentCount * theAugment) + (useStim * 264);
-					}
-					if (stat == theAccuracy) {
-						needStim = "No";
-						if (useStim) {
-							needStim = "Yes";
-						}
-						return {gearC: gearCount, augmentC: augmentCount, overflow: statTotal - stat, stim: needStim};
-					} else {
-						return {gearC: gearCount, augmentC: augmentCount, overflow: statTotal - stat};
-					}
-				}
-				
-				if (theAlacrity > 0){
-					while (augmentCount != 0) {
-						alacrityArray.push(getCount(theAlacrity, baseAlacrity));
-						gearCount++;
-					}
-					alacrityArray.sort(function (a, b) {
-						return a.overflow - b.overflow;
-					});
-				}
-				
-				if (theAccuracy > 0){
-					if (theStim != ("versatile")) {
-						augmentCount = null;
-						gearCount = 0;
-						while (augmentCount != 0) {
-							accuracyArray.push(getCount(theAccuracy, baseAccuracy, 1));
-							gearCount++;
-						}
-					}
-					if (theStim != ("proficient")) {
-						augmentCount = 15;
-						gearCount = 0;
-						while (augmentCount != 0) {
-							accuracyArray.push(getCount(theAccuracy, baseAccuracy));
-							gearCount++;
-						}
-					}
-					accuracyArray.sort(function (a, b) {
-						return a.overflow - b.overflow;
-					});
-				}
-				drawResults(alacrityArray, accuracyArray, baseCrit);
-			}
-			
-			function drawResults(alacrityList, accuracyList, baseCrit) {//Draw Results to Page
-				let output = null;
-				if (accuracyList.length == 0 && alacrityList.length > 0) {//alacrity only
-					output = "<tr><th>Alacrity Gear Count <span class='footnote'><br>[excluding implants]</span></th><th>Alacrity Augment Count</th><th>Overcapped Amount</th><th>Available Critical Rating <span class='footnote'><br>[excluding stim/crystal etc.]</span></th></tr>";
-					for (let i = 0; i < alacrityList.length; i++) {
-						if(alacrityList[i].gearC > 0){//Minimum alacrity count
-							let maxCrit = baseCrit + ((8 - alacrityList[i].gearC) * document.getElementById("iRating").value) + ((14 - alacrityList[i].augmentC) * document.getElementById("augment").value);
-							output += "<tr><td>" + alacrityList[i].gearC + "</td><td>" + alacrityList[i].augmentC + "</td><td>" + alacrityList[i].overflow + "</td><td>" + maxCrit + "</td></tr>";
-						}
-					}
-				} else if (alacrityList.length == 0 && accuracyList.length > 0) {//accuracy only
-					output = "<tr><th>Accuracy Gear Count <span class='footnote'><br>[excluding implants]</span></th><th>Accuracy Augment Count</th><th>Proficient Stim Required</th><th>Overcapped Amount</th><th>Available Critical Rating <span class='footnote'><br>[excluding stim/crystal etc.]</span></th></tr>";
-					for (let i = 0; i < accuracyList.length; i++) {
-						let maxCrit = baseCrit + ((8 - accuracyList[i].gearC) * document.getElementById("iRating").value) + ((14 - accuracyList[i].augmentC) * document.getElementById("augment").value);
-						output += "<tr><td>" + accuracyList[i].gearC + "</td><td>" + accuracyList[i].augmentC + "</td><td>" + accuracyList[i].stim + "</td><td>" + accuracyList[i].overflow + "</td><td>" + maxCrit + "</td></tr>";
-					}
-				} else if (alacrityList.length > 0 && accuracyList.length > 0) {//accuracy and alacrity
-					let alcAccList = [];
-					for (let i = 0; i < accuracyList.length; i++) {
-						let alcClass = null;
-						for (let j = 0; j < alacrityList.length; j++) {
-							if ((accuracyList[i].augmentC + alacrityList[j].augmentC) < 15){
-								alcClass = alacrityList[j];
-								j = alacrityList.length;
-							}
-						}
-						if ((accuracyList[i].gearC + alcClass.gearC) < 8 && accuracyList[i].gearC < 7 && alcClass.gearC > 0) {//Set maximum accuracy and alacrity slots available
-							alcAccList.push({
-								accGear: accuracyList[i].gearC,
-								accAug: accuracyList[i].augmentC,
-								accStim: accuracyList[i].stim,
-								alcGear: alcClass.gearC,
-								alcAug: alcClass.augmentC,
-								totalOverflow: accuracyList[i].overflow + alcClass.overflow
-							});
-						}
-					}
-					alcAccList.sort(function (a, b) {
-						return a.totalOverflow - b.totalOverflow;
-					});
-					if (alcAccList.length > 0) {
-						output = "<tr><th>Alacrity Gear Count <span class='footnote'><br>[excluding implants]</span></th><th>Alacrity Augment Count</th><th>Accuracy Gear Count <span class='footnote'><br>[excluding implants]</span></th><th>Accuracy Augment Count</th><th>Proficient Stim Required</th><th>Overcapped Amount</th><th>Available Critical Rating <span class='footnote'><br>[excluding stim/crystal etc.]</span></th></tr>";
-						for (let i = 0; i < alcAccList.length; i++) {
-							let maxCrit = baseCrit + ((8 - alcAccList[i].alcGear - alcAccList[i].accGear) * document.getElementById("iRating").value) + ((14 - alcAccList[i].alcAug - alcAccList[i].accAug) * document.getElementById("augment").value);
-							output += "<tr><td>" + alcAccList[i].alcGear + "</td><td>" + alcAccList[i].alcAug + "</td><td>" + alcAccList[i].accGear + "</td><td>" + alcAccList[i].accAug + "</td><td>" + alcAccList[i].accStim + "</td><td>" + alcAccList[i].totalOverflow + "</td><td>" + maxCrit + "</td></tr>";
-						}
-					} else {
-						output = "No combinations available";
-					}
-				}
-				
-				document.getElementById("result").innerHTML = output;
-			}
-		</script>
+		<script src="myScripts.js"></script> 
 		<title>
 			SWTOR Alacrity and Accuracy Calculator
 		</title>
@@ -234,8 +87,8 @@
 		Accuracy % Required:
 		<select id="accuracy">
 			<option value=0>None - [Healer]</option>
-			<option value=2694>10% - [DPS PVE]</option>
-			<option value=1081>5% - [DPS PVP]</option>
+			<option value=2694>110% - [DPS PVE]</option>
+			<option value=1081>105% - [DPS PVP]</option>
 		</select>
 		<br>
 		Alacrity GCD Required:
@@ -256,7 +109,19 @@
 		<br>
 		-->
 		<div class="tooltipLink">Item Rating:
-			<span class="tooltip">This includes Main Hand, Off Hand, Helmet, Body Armour, Gloves, Boots, & Ear Piece</span>
+			<span class="tooltip">
+				This includes: 
+				<ul>
+					<li>Main Hand</li>
+					<li>Off Hand</li>
+					<li>Helmet</li>
+					<li>Body Armour</li>
+					<li>Gloves</li>
+					<li>Pants</li>
+					<li>Boots</li>
+					<li>Ear Piece</li>
+				</ul>
+			</span>
 		</div>
 		<select id="iRating">
 			<option value=543>328</option>
@@ -269,7 +134,8 @@
 			<option value=627>342</option>
 			<option value=640>344</option>
 		</select>
-		<br>
+        Use Hyde & Zeek [340 max]: <input type="checkbox" id="hydeZeek">
+        <br>
 		Augment Rating:
 		<select id="augment">
 			<option value=95>276 [Prototype]</option>
@@ -296,14 +162,14 @@
 		</select>
 		<br>
 		Implant 1 Stat:
-		<select id="implant1Stat">
+		<select id="implantStat0">
 			<option value="accuracy">Accuracy</option>
 			<option value="alacrity">Alacrity</option>
 			<option value="critical" selected>Critical</option>
 		</select>
 		<br>
 		Implant 2 Stat:
-		<select id="implant2Stat">
+		<select id="implantStat1">
 			<option value="accuracy">Accuracy</option>
 			<option value="alacrity">Alacrity</option>
 			<option value="critical" selected>Critical</option>
