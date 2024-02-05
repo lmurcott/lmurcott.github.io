@@ -1,3 +1,15 @@
+function alacritySwap() {
+    const theAlacrity = document.getElementById("alacrityOptions").value;
+    let myAlacrity = 0;
+    if (theAlacrity != "custom") {
+        myAlacrity = parseInt(theAlacrity);
+        document.getElementById("alacrity").type = "hidden";
+    } else {
+        document.getElementById("alacrity").type = "number";   
+    }
+    document.getElementById("alacrity").value = myAlacrity;
+}
+
 function listVariations () {
     const theAccuracy = parseInt(document.getElementById("accuracy").value);
     const theAlacrity = parseInt(document.getElementById("alacrity").value);
