@@ -1,32 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<style>
 			h1 {
 				margin: 0px;
 			}
-			
+
 			h2 {
 				font-size: 0.7em;
 				font-style: italic;
 			}
-			
+
 			* {
 				font-family: sans-serif;
 			}
-			
+
 			td, th {
 				border: solid 0.1em black;
 				border-radius: 0.3em;
 				padding: 0.7em;
 				text-align: center;
 			}
-			
+
 			th {
 				font-weight: bold;
 				background-color: #DDDDDD;
 			}
-			
+
 			select, input {
 				margin: 0.5em;
 				padding: 0.3em;
@@ -35,30 +35,30 @@
 			input {
 				font-weight: bold;
 			}
-			
+
 			tr:hover > td {
 				background-color: black;
 				color: white;
 			}
-			
+
 			.footnote {
 				font-weight: normal;
 				font-size: 0.8em;
 			}
-			
+
 			.btnSubmit {
 				font-size: 1.5em;
 			}
-			
+
 			.tooltipLink {
 				display: inline-block;
 				border-bottom: dotted 1px black;
 			}
-			
+
 			.tooltipLink:hover .tooltip{
 				visibility: visible;
 			}
-			
+
 			.tooltip {
 				visibility: hidden;
 				padding: 0.75em;
@@ -72,7 +72,7 @@
 				color: white;
 			}
 		</style>
-		<script src="myScripts.js"></script> 
+		<script src="myScripts.js"></script>
 		<title>
 			SWTOR Alacrity and Accuracy Calculator
 		</title>
@@ -103,7 +103,7 @@
 			<option value=0>1.5 second GCD [Default]</option>
 			<option value="custom">Custom</option>
 		</select>
-		<input type="hidden" id="alacrity" maxlength="4" minlength="1" min="0" max="9999">
+		<input type="hidden" id="alacrity">
 		<br>
 		<!--
 		Alacrity Relic Used and Active?
@@ -112,17 +112,7 @@
 		-->
 		<div class="tooltipLink">Item Rating:
 			<span class="tooltip">
-				This includes: 
-				<ul>
-					<li>Main Hand</li>
-					<li>Off Hand</li>
-					<li>Helmet</li>
-					<li>Body Armour</li>
-					<li>Gloves</li>
-					<li>Pants</li>
-					<li>Boots</li>
-					<li>Ear Piece</li>
-				</ul>
+				This includes: Main Hand, Off Hand, Helmet, Body Armour, Gloves, Pants, Boots, Ear Piece
 			</span>
 		</div>
 		<select id="iRating">
@@ -152,7 +142,7 @@
 			<option value="versatile">Versatile/Other/None</option>
 		</select>
 		<br>
-		Implant Rating: 
+		Implant Rating:
 		<select id="implantRating">
 			<option value=543>328</option>
 			<option value=554>330</option>
@@ -181,4 +171,4 @@
 		<br>
 		<table id="result"></table>
 	</body>
-</html> 
+</html>

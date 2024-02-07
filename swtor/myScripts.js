@@ -5,10 +5,12 @@ function alacritySwap() {
         myAlacrity = parseInt(theAlacrity);
         document.getElementById("alacrity").type = "hidden";
     } else {
-        document.getElementById("alacrity").type = "number";   
+        document.getElementById("alacrity").type = "number";
     }
     document.getElementById("alacrity").value = myAlacrity;
 }
+
+
 
 function listVariations () {
     const theAccuracy = parseInt(document.getElementById("accuracy").value);
@@ -16,13 +18,13 @@ function listVariations () {
     const theIRating = parseInt(document.getElementById("iRating").value);
     const theAugment = parseInt(document.getElementById("augment").value);
     const theStim = document.getElementById("stim").value;
-    
+
     const hydeZeek = function () {
         const status = document.getElementById("hydeZeek").checked;
-        if (status && theIRating < 615 && theIRating != 577){
+        if (status && theIRating < 615 && theIRating != 577) {
             return true;
         }
-    }
+    };
 
     const getImplantsStat = function (stat) {// "accuracy" "critical" "alacrity"
         const implantRating = parseInt(document.getElementById("implantRating").value);
@@ -35,7 +37,7 @@ function listVariations () {
         }
 
         return rating;
-    }
+    };
 
     const getAllCombinations = function() {
         let accuracyC, alacrityC, accuracyStimC;
@@ -78,14 +80,14 @@ function listVariations () {
             theCombinations = sortArray(theCombinations, 2);
         }
         return theCombinations;
-    }
+    };
 
     const isStimmed = function (list, stimUsed) {//add accuracy stim note to accuracy only
         for(let i=0; i < list.length; i++) {
             list[i].push(stimUsed);
         }
         return list;
-    }
+    };
 
     const combineStats = function (alacrity, accuracy) {
         let maxGear = 7;
@@ -101,7 +103,7 @@ function listVariations () {
                     (alacrity[a][1] + accuracy[b][1]) < 15 &&
                     (alacrity[a][0] + accuracy[b][0]) <= maxGear
                     ) {
-                        let theCombination = alacrity[a].concat(accuracy[b])
+                        let theCombination = alacrity[a].concat(accuracy[b]);
                         theCombination.push(alacrity[a][2] + accuracy[b][2]);//total stats in array
                         mergedArray.push(theCombination);
                         break;
@@ -110,7 +112,7 @@ function listVariations () {
         }
 
         return mergedArray;
-    }
+    };
 
     const statCombinations = function(stat, target, stim = false) {
 
@@ -129,10 +131,10 @@ function listVariations () {
         } else {
             return generate(getImplantsStat(stat), target, maxGear, minGear);
         }
-    }
+    };
 
     const generate = function(base, target, maxGear, minGear) {
-        results = [];
+        let results = [];
         for (let g = minGear; g <= maxGear; g++) {
             let total = base + (g * theIRating);
             for (let a = 0; a < 15; a++) {//find augments
@@ -151,15 +153,15 @@ function listVariations () {
         }
         */
         return results;
-    }
+    };
 
     const sortArray = function (theArray, column) {
-        newArray = theArray;
+        let newArray = theArray;
         newArray.sort(function (a, b) {
                     return a[column] - b[column];
             });
         return newArray;
-    }
+    };
 
     const drawTable = function(data) {
         let tblHTML = "<table>";
@@ -199,7 +201,7 @@ function listVariations () {
 
         tblHTML += "</table>";
         return tblHTML;
-    }
+    };
 
     const draw = function(myCombinations) {
         let theHTML;
@@ -209,9 +211,9 @@ function listVariations () {
         } else {
             theHTML = drawTable(myCombinations);
         }
-        
+
         document.getElementById("result").innerHTML = theHTML;
-    }
+    };
 
     draw(getAllCombinations());
 }
